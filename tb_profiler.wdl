@@ -6,14 +6,25 @@ task tb_profiler_bam {
     }
     String bam_basename = basename(bam)
     command <<<
-    #tb-profiler update_tbdb --match_ref /path/to/your/reference.fasta
     tb-profiler profile -a ~{bam} -p ~{bam_basename}
-    tar -zcvf ~{bam_basename}.tar.gz ~{bam_basename}
+    tar -zcvf ~{bam_basename}.tar.gz results/
     >>>
     runtime {
-        docker: "staphb/tbprofiler:4.4.2"
+        docker: "aofarrel/tbprofiler_nc_000962.3:4.4.2"
     }
     output {
-        File tbprofiler_results = "~{bam_basename}.gzip"
+        File tbprofiler_results = "~{bam_basename}.tar.gz"
+    }
+}
+
+workflow profile {
+    input {
+        File bam
+        File ref
+    }
+    
+    call tb_profiler_bam {
+        input:
+            bam = bam
     }
 }
