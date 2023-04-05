@@ -16,7 +16,7 @@ task tb_profiler_bam {
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + ceil(2*size(bam, "GB")) + disktype
+		disks: "local-disk " + ceil(2*size(bam, "GB")) + diskType
 		docker: "ashedpotatoes/tbprofiler:4.4.2"
 		memory: "${memory} GB"
 		preemptible: "${preempt}"
