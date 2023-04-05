@@ -4,17 +4,19 @@ task tb_profiler_bam {
     input {
         File bam
         
+        Boolean ssd = false
         Int cpu = 2
         Int memory = 4
         Int preempt = 1
     }
     String bam_basename = basename(bam)
+    String diskType = if((ssd)) then " SSD" else " HDD"
     
     command <<< tb-profiler profile -a ~{bam} -p ~{bam_basename} >>>
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + ceil(2*size(bam, "GB")) + " SSD"
+		disks: "local-disk " + ceil(2*size(bam, "GB")) + disktype
 		docker: "ashedpotatoes/tbprofiler:4.4.2"
 		memory: "${memory} GB"
 		preemptible: "${preempt}"

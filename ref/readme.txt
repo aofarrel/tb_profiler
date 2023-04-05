@@ -1,1 +1,1 @@
-This is the exact same ref.fa (but renamed) as what comes out of the refprep workflow seen here: https://dockstore.org/workflows/github.com/aofarrel/clockwork-wdl/clockwork_reference_prepare:main?tab=info
+This is the exact same ref.fa (but renamed) as what comes out of the refprep workflow seen here: https://dockstore.org/workflows/github.com/aofarrel/clockwork-wdl/clockwork_reference_prepare:2.8.0?tab=info

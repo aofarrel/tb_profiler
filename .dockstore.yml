@@ -1,0 +1,8 @@
+version: 1.2
+workflows:
+  - subclass: WDL
+    primaryDescriptorPath: /tb_profiler.wdl
+    testParameterFiles:
+      - /tb_profiler.json
+    authors:
+      - orcid: 0000-0003-4896-1858
