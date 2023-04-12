@@ -9,10 +9,14 @@ task tb_profiler_bam {
         Int memory = 4
         Int preempt = 1
     }
-    String bam_basename = basename(bam)
+    String sample_name = basename(bam, "_to_Ref.H37Rv.bam")
     String diskType = if((ssd)) then " SSD" else " HDD"
     
-    command <<< tb-profiler profile -a ~{bam} -p ~{bam_basename} >>>
+    command <<<
+    tb-profiler profile -a ~{bam} -p ~{sample_name} --txt
+    sed -n '11p' results_from_fastq/tbprofiler.results.txt >> ~{sample_name}_strain.txt
+    sed -n '12p' results_from_fastq/tbprofiler.results.txt >> ~{sample_name}_resistance.txt
+    >>>
     
     runtime {
         cpu: cpu
@@ -21,7 +25,11 @@ task tb_profiler_bam {
 		memory: "${memory} GB"
 		preemptible: "${preempt}"
     }
-    output { File tbprofiler_results = "results/~{bam_basename}.results.json" }
+    output {
+    File tbprofiler_results = "results/~{sample_name}.results.json"
+    String tbprofiler_strain = read_string("~{sample_name}_strain.txt")
+    String tbprofiler_resistance = read_string("~{sample_name}_resistance.txt")
+    }
 }
 
 workflow profile {
