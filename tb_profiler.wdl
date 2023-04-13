@@ -27,8 +27,8 @@ task tb_profiler_bam {
     }
     output {
     File tbprofiler_results = "results/~{sample_name}.results.json"
-    String tbprofiler_strain = read_string("~{sample_name}_strain.txt")
-    String tbprofiler_resistance = read_string("~{sample_name}_resistance.txt")
+    String tbprofiler_strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
+    String tbprofiler_resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
     }
 }
 
