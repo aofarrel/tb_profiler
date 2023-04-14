@@ -14,8 +14,9 @@ task tb_profiler_bam {
     
     command <<<
     tb-profiler profile -a ~{bam} -p ~{sample_name} --txt
-    sed -n '11p' results_from_fastq/~{sample_name}.results.txt >> ~{sample_name}_strain.txt
-    sed -n '12p' results_from_fastq/~{sample_name}.results.txt >> ~{sample_name}_resistance.txt
+    # to do: check if this works on ones that return no lineage like SAMN0657912
+    sed -n '11p' results/~{sample_name}.results.txt >> ~{sample_name}_strain.txt
+    sed -n '12p' results/~{sample_name}.results.txt >> ~{sample_name}_resistance.txt
     >>>
     
     runtime {
@@ -26,7 +27,8 @@ task tb_profiler_bam {
 		preemptible: "${preempt}"
     }
     output {
-    File tbprofiler_results = "results/~{sample_name}.results.json"
+    File tbprofiler_json = "results/~{sample_name}.results.json"
+    File tbprofiler_txt = "results/~{sample_name}.results.txt" # will probably get rid of this eventually
     String tbprofiler_strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
     String tbprofiler_resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
     }
