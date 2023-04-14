@@ -14,8 +14,8 @@ task tb_profiler_bam {
     
     command <<<
     tb-profiler profile -a ~{bam} -p ~{sample_name} --txt
-    sed -n '11p' results_from_fastq/tbprofiler.results.txt >> ~{sample_name}_strain.txt
-    sed -n '12p' results_from_fastq/tbprofiler.results.txt >> ~{sample_name}_resistance.txt
+    sed -n '11p' results_from_fastq/~{sample_name}.results.txt >> ~{sample_name}_strain.txt
+    sed -n '12p' results_from_fastq/~{sample_name}.results.txt >> ~{sample_name}_resistance.txt
     >>>
     
     runtime {
