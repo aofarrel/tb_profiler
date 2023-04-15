@@ -15,8 +15,8 @@ task tb_profiler_bam {
     command <<<
     tb-profiler profile -a ~{bam} -p ~{sample_name} --txt
     # to do: check if this works on ones that return no lineage like SAMN0657912
-    sed -n '11p' results/~{sample_name}.results.txt >> ~{sample_name}_strain.txt
-    sed -n '12p' results/~{sample_name}.results.txt >> ~{sample_name}_resistance.txt
+    sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
+    sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
     >>>
     
     runtime {
