@@ -20,7 +20,7 @@ task tb_profiler_fastq {
 	String sample_name = sub(read_file_basename, "_.*", "")
     
     command <<<
-    tb-profiler profile -1 ~{fastqs[0]} -2 ~{fastqs[1]} -prefix ~{sample_name}
+    tb-profiler profile -1 ~{fastqs[0]} -2 ~{fastqs[1]} -p ~{sample_name}
     sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
     sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
     >>>
