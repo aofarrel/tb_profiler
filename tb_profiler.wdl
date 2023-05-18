@@ -2,12 +2,13 @@ version 1.0
 
 task tb_profiler_fastq {
     input {
-    Array[File] fastqs
-    
-    Boolean ssd = false
-    Int cpu = 2
-    Int memory = 4
-    Int preempt = 1
+        Array[File] fastqs
+        
+        Int addldisk = 10
+        Int cpu = 2
+        Int memory = 4
+        Int preempt = 1
+        Boolean ssd = false
     }
     String diskType = if((ssd)) then " SSD" else " HDD"
     
@@ -27,7 +28,7 @@ task tb_profiler_fastq {
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + ceil(2*size(fastqs, "GB")) + diskType
+		disks: "local-disk " + ceil(2*size(fastqs, "GB")+addldisk) + diskType
 		docker: "ashedpotatoes/tbprofiler:4.4.2"
 		memory: "${memory} GB"
 		preemptible: "${preempt}"
@@ -44,10 +45,10 @@ task tb_profiler_bam {
     input {
         File bam
         
-        Boolean ssd = false
         Int cpu = 2
         Int memory = 4
         Int preempt = 1
+        Boolean ssd = false
     }
     String sample_name = basename(bam, "_to_Ref.H37Rv.bam")
     String diskType = if((ssd)) then " SSD" else " HDD"
