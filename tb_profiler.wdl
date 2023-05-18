@@ -4,12 +4,13 @@ task tb_profiler_fastq {
     input {
         Array[File] fastqs
         
-        Int addldisk = 10
+        Int addldisk = 15
         Int cpu = 2
         Int memory = 4
         Int preempt = 1
         Boolean ssd = false
     }
+    Int diskSize = addldisk + ceil(2*size(fastqs, "GB"))
     String diskType = if((ssd)) then " SSD" else " HDD"
     
     # We need to derive the sample name from our inputs because sample name is a
@@ -28,7 +29,7 @@ task tb_profiler_fastq {
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + ceil(2*size(fastqs, "GB")+addldisk) + diskType
+		disks: "local-disk " + diskSize + diskType
 		docker: "ashedpotatoes/tbprofiler:4.4.2"
 		memory: "${memory} GB"
 		preemptible: "${preempt}"
