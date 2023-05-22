@@ -1,0 +1,305 @@
+Script started on 2023-04-12 21:58:38+00:00 [TERM="xterm" TTY="/dev/pts/0" COLUMNS="137" LINES="60"]
+# tb-profiler profile -1 SAMEA14493485_ERR9806894_1.fastq -2 SAMEA14493485_ERR9806894_2.fastq --txt --csv
+[94mUsing ref file: /opt/conda/share/tbprofiler//tbdb.fasta[0m
+[94mUsing gff file: /opt/conda/share/tbprofiler//tbdb.gff[0m
+[94mUsing bed file: /opt/conda/share/tbprofiler//tbdb.bed[0m
+[94mUsing version file: /opt/conda/share/tbprofiler//tbdb.version.json[0m
+[94mUsing json_db file: /opt/conda/share/tbprofiler//tbdb.dr.json[0m
+[94mUsing variables file: /opt/conda/share/tbprofiler//tbdb.variables.json[0m
+[94mUsing spoligotype_spacers file: /opt/conda/share/tbprofiler//tbdb.spoligotype_spacers.txt[0m
+[94mUsing spoligotype_annotations file: /opt/conda/share/tbprofiler//tbdb.spoligotype_list.csv[0m
+[94mUsing bedmask file: /opt/conda/share/tbprofiler//tbdb.mask.bed[0m
+[94mUsing barcode file: /opt/conda/share/tbprofiler//tbdb.barcode.bed[0m
+
+Running command:
+set -u pipefail; trimmomatic PE -threads 1 -phred33 SAMEA14493485_ERR9806894_1.fastq SAMEA14493485_ERR9806894_2.fastq -baseout ./c59cc777-75bd-44ca-971e-99ff77033e06 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36
+
+Running command:
+set -u pipefail; cat ./c59cc777-75bd-44ca-971e-99ff77033e06_1U ./c59cc777-75bd-44ca-971e-99ff77033e06_2U > ./c59cc777-75bd-44ca-971e-99ff77033e06_TU
+
+Running command:
+set -u pipefail; rm ./c59cc777-75bd-44ca-971e-99ff77033e06_1U ./c59cc777-75bd-44ca-971e-99ff77033e06_2U
+
+Running command:
+set -u pipefail; bwa mem -t 1 -K 10000000 -c 100 -R '@RG\tID:tbprofiler\tSM:tbprofiler\tPL:illumina' -M -T 50 /opt/conda/share/tbprofiler//tbdb.fasta ./c59cc777-75bd-44ca-971e-99ff77033e06_1P ./c59cc777-75bd-44ca-971e-99ff77033e06_2P | samtools sort -@ 1 -o ./c59cc777-75bd-44ca-971e-99ff77033e06.pair.bam -
+
+Running command:
+set -u pipefail; bwa mem -t 1 -K 10000000 -c 100 -R '@RG\tID:tbprofiler\tSM:tbprofiler\tPL:illumina' -M -T 50 /opt/conda/share/tbprofiler//tbdb.fasta ./c59cc777-75bd-44ca-971e-99ff77033e06_TU | samtools sort -@ 1 -o ./c59cc777-75bd-44ca-971e-99ff77033e06.single.bam -
+
+Running command:
+set -u pipefail; samtools merge -@ 1 -f ./c59cc777-75bd-44ca-971e-99ff77033e06.unsort.bam ./c59cc777-75bd-44ca-971e-99ff77033e06.pair.bam ./c59cc777-75bd-44ca-971e-99ff77033e06.single.bam
+
+Running command:
+set -u pipefail; samtools sort -m 768M -n -@ 1  ./c59cc777-75bd-44ca-971e-99ff77033e06.unsort.bam | samtools fixmate -@ 1 -m - - | samtools sort -m 768M -@ 1 - | samtools markdup -@ 1 - ./c59cc777-75bd-44ca-971e-99ff77033e06.bam
+
+Running command:
+set -u pipefail; rm ./c59cc777-75bd-44ca-971e-99ff77033e06.single.bam ./c59cc777-75bd-44ca-971e-99ff77033e06.pair.bam ./c59cc777-75bd-44ca-971e-99ff77033e06.unsort.bam
+
+Running command:
+set -u pipefail; samtools index -@ 1 ./c59cc777-75bd-44ca-971e-99ff77033e06.bam
+[94mUsing ./c59cc777-75bd-44ca-971e-99ff77033e06.bam
+
+Please ensure that this BAM was made using the same reference as in the database.
+If you are not sure what reference was used it is best to remap the reads.[0m
+
+Running command:
+set -u pipefail; cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | parallel -j 1 --col-sep " " "samtools view -T /opt/conda/share/tbprofiler//tbdb.fasta -h ./c59cc777-75bd-44ca-971e-99ff77033e06.bam {1} | samclip --ref /opt/conda/share/tbprofiler//tbdb.fasta | samtools view -b > ./c59cc777-75bd-44ca-971e-99ff77033e06.{2}.tmp.bam && samtools index ./c59cc777-75bd-44ca-971e-99ff77033e06.{2}.tmp.bam && freebayes -f /opt/conda/share/tbprofiler//tbdb.fasta -r {1} --haplotype-length -1  ./c59cc777-75bd-44ca-971e-99ff77033e06.{2}.tmp.bam | bcftools view -c 1 | bcftools norm -f /opt/conda/share/tbprofiler//tbdb.fasta | bcftools filter -t {1} -e 'FMT/DP<10' -S . -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.{2}.vcf.gz"
+
+Running command:
+set -u pipefail; cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | parallel -j 1 --col-sep " " "bcftools index  ./c59cc777-75bd-44ca-971e-99ff77033e06.{2}.vcf.gz"
+
+Running command:
+set -u pipefail; bcftools concat -aD `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./c59cc777-75bd-44ca-971e-99ff77033e06."$2".vcf.gz"}'` | bcftools view -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.vcf.gz
+
+Running command:
+set -u pipefail; rm `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./c59cc777-75bd-44ca-971e-99ff77033e06."$2".vcf.gz*"}'`
+
+Running command:
+set -u pipefail; rm `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./c59cc777-75bd-44ca-971e-99ff77033e06."$2".tmp.bam*"}'`
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -c 1 -a ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.vcf.gz | bcftools norm -m - | bcftools view -v snps | combine_vcf_variants.py --ref /opt/conda/share/tbprofiler//tbdb.fasta --gff /opt/conda/share/tbprofiler//tbdb.gff | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools sort -Oz -o /mount/be7c62df-fc7a-4c96-84ee-83c03eb929a1.vcf.gz && bcftools index /mount/be7c62df-fc7a-4c96-84ee-83c03eb929a1.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -c 1 -a ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.vcf.gz | bcftools norm -m - | bcftools view -v indels | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools sort -Oz -o /mount/c1afe7ed-ca79-459c-b980-c7c76c701187.vcf.gz && bcftools index /mount/c1afe7ed-ca79-459c-b980-c7c76c701187.vcf.gz
+
+Running command:
+set -u pipefail; bcftools concat -a /mount/be7c62df-fc7a-4c96-84ee-83c03eb929a1.vcf.gz /mount/c1afe7ed-ca79-459c-b980-c7c76c701187.vcf.gz | bcftools sort -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.csq.vcf.gz
+Removing /mount/be7c62df-fc7a-4c96-84ee-83c03eb929a1.vcf.gz
+Removing /mount/c1afe7ed-ca79-459c-b980-c7c76c701187.vcf.gz
+Removing /mount/be7c62df-fc7a-4c96-84ee-83c03eb929a1.vcf.gz.csi
+Removing /mount/c1afe7ed-ca79-459c-b980-c7c76c701187.vcf.gz.csi
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -u -f '%CHROM\t%POS\t%REF\t%ALT\t%ANN\t[%AD]\n' ./c59cc777-75bd-44ca-971e-99ff77033e06.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; samtools flagstat -O json ./c59cc777-75bd-44ca-971e-99ff77033e06.bam > 77765676-ea59-49da-9d21-af7955a949e2
+
+Running command:
+set -u pipefail; bedtools genomecov -ibam ./c59cc777-75bd-44ca-971e-99ff77033e06.bam
+
+Running command:
+set -u pipefail; samtools view -Mb -L /opt/conda/share/tbprofiler//tbdb.bed ./c59cc777-75bd-44ca-971e-99ff77033e06.bam | bedtools coverage -a /opt/conda/share/tbprofiler//tbdb.bed -b - -d -sorted
+
+Running command:
+set -u pipefail; samtools view -Mb -L /opt/conda/share/tbprofiler//tbdb.barcode.bed ./c59cc777-75bd-44ca-971e-99ff77033e06.bam -T /opt/conda/share/tbprofiler//tbdb.fasta > ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.bam
+
+Running command:
+set -u pipefail; samtools index ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.bam
+
+Running command:
+set -u pipefail; freebayes -f /opt/conda/share/tbprofiler//tbdb.fasta -t /opt/conda/share/tbprofiler//tbdb.barcode.bed ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.bam --haplotype-length -1 | bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT\t%AD]\n'
+
+Running command:
+set -u pipefail; bedtools getfasta -fi /opt/conda/share/tbprofiler//tbdb.fasta -bed /opt/conda/share/tbprofiler//tbdb.barcode.bed
+
+Running command:
+set -u pipefail; samtools view -b -L /opt/conda/share/tbprofiler//tbdb.barcode.bed ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.bam | bedtools coverage -a /opt/conda/share/tbprofiler//tbdb.barcode.bed -b - -d -sorted
+
+Running command:
+set -u pipefail; delly call -t DEL -g /opt/conda/share/tbprofiler//tbdb.fasta ./c59cc777-75bd-44ca-971e-99ff77033e06.bam -o ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.bcf
+
+Running command:
+set -u pipefail; bcftools query -l ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.bcf
+
+Running command:
+set -u pipefail; bcftools view -c 2  ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.bcf | bcftools view -e '(INFO/END-POS)>=100000' -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -R /opt/conda/share/tbprofiler//tbdb.bed ./c59cc777-75bd-44ca-971e-99ff77033e06.tmp.delly.vcf.gz -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.vcf.gz | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools view -Oz -o ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -u -f '%CHROM\t%POS\t%REF\t%ALT\t%ANN\t[%AD]\n' ./c59cc777-75bd-44ca-971e-99ff77033e06.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; rm ./c59cc777-75bd-44ca-971e-99ff77033e06*
+[94m
+Writing outputs[0m
+[94m---------------[0m
+[94mWriting json file: ./results/tbprofiler.results.json[0m
+[94mWriting text file: ./results/tbprofiler.results.txt[0m
+[94mWriting csv file: ./results/tbprofiler.results.csv[0m
+[92m
+Profiling finished sucessfully![0m
+# lls
+sh: 2: lls: not found
+# ls
+SAMEA14493485_ERR9806894_1.fastq  SAMEA14493485_ERR9806894_2.fastq  SAMEA14493485_to_Ref.H37Rv.bam  bam  results  timings.txt  vcf
+# ls results
+tbprofiler.results.csv	tbprofiler.results.json  tbprofiler.results.txt
+# mv -r results/ results_from_fastq/
+mv: invalid option -- 'r'
+Try 'mv --help' for more information.
+# 
+# mv results/ results_from_fastq/
+# 
+# ls
+SAMEA14493485_ERR9806894_1.fastq  SAMEA14493485_ERR9806894_2.fastq  SAMEA14493485_to_Ref.H37Rv.bam  bam  results_from_fastq  timings.txt  vcf
+# tb-profiler profile -a SAMEA14493485_to_Ref.H37Rv.bam -p SAMEA14493485_to_Ref.H37Rv.bam --txt --csv
+[94mUsing ref file: /opt/conda/share/tbprofiler//tbdb.fasta[0m
+[94mUsing gff file: /opt/conda/share/tbprofiler//tbdb.gff[0m
+[94mUsing bed file: /opt/conda/share/tbprofiler//tbdb.bed[0m
+[94mUsing version file: /opt/conda/share/tbprofiler//tbdb.version.json[0m
+[94mUsing json_db file: /opt/conda/share/tbprofiler//tbdb.dr.json[0m
+[94mUsing variables file: /opt/conda/share/tbprofiler//tbdb.variables.json[0m
+[94mUsing spoligotype_spacers file: /opt/conda/share/tbprofiler//tbdb.spoligotype_spacers.txt[0m
+[94mUsing spoligotype_annotations file: /opt/conda/share/tbprofiler//tbdb.spoligotype_list.csv[0m
+[94mUsing bedmask file: /opt/conda/share/tbprofiler//tbdb.mask.bed[0m
+[94mUsing barcode file: /opt/conda/share/tbprofiler//tbdb.barcode.bed[0m
+[94mUsing SAMEA14493485_to_Ref.H37Rv.bam
+
+Please ensure that this BAM was made using the same reference as in the database.
+If you are not sure what reference was used it is best to remap the reads.[0m
+
+Running command:
+set -u pipefail; samtools index -@ 1 SAMEA14493485_to_Ref.H37Rv.bam
+
+Running command:
+set -u pipefail; cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | parallel -j 1 --col-sep " " "samtools view -T /opt/conda/share/tbprofiler//tbdb.fasta -h SAMEA14493485_to_Ref.H37Rv.bam {1} | samclip --ref /opt/conda/share/tbprofiler//tbdb.fasta | samtools view -b > ./2006bda4-1364-4c51-9915-a6ec8ef60a96.{2}.tmp.bam && samtools index ./2006bda4-1364-4c51-9915-a6ec8ef60a96.{2}.tmp.bam && freebayes -f /opt/conda/share/tbprofiler//tbdb.fasta -r {1} --haplotype-length -1  ./2006bda4-1364-4c51-9915-a6ec8ef60a96.{2}.tmp.bam | bcftools view -c 1 | bcftools norm -f /opt/conda/share/tbprofiler//tbdb.fasta | bcftools filter -t {1} -e 'FMT/DP<10' -S . -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.{2}.vcf.gz"
+
+Running command:
+set -u pipefail; cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | parallel -j 1 --col-sep " " "bcftools index  ./2006bda4-1364-4c51-9915-a6ec8ef60a96.{2}.vcf.gz"
+
+Running command:
+set -u pipefail; bcftools concat -aD `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./2006bda4-1364-4c51-9915-a6ec8ef60a96."$2".vcf.gz"}'` | bcftools view -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.vcf.gz
+
+Running command:
+set -u pipefail; rm `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./2006bda4-1364-4c51-9915-a6ec8ef60a96."$2".vcf.gz*"}'`
+
+Running command:
+set -u pipefail; rm `cat /opt/conda/share/tbprofiler//tbdb.bed | awk '{print $1":"$2"-"$3" "$1"_"$2"_"$3}' | awk '{print "./2006bda4-1364-4c51-9915-a6ec8ef60a96."$2".tmp.bam*"}'`
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -c 1 -a ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.vcf.gz | bcftools norm -m - | bcftools view -v snps | combine_vcf_variants.py --ref /opt/conda/share/tbprofiler//tbdb.fasta --gff /opt/conda/share/tbprofiler//tbdb.gff | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools sort -Oz -o /mount/f81eae23-b9ab-4c16-8ad6-b4474f85dd0f.vcf.gz && bcftools index /mount/f81eae23-b9ab-4c16-8ad6-b4474f85dd0f.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -c 1 -a ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.vcf.gz | bcftools norm -m - | bcftools view -v indels | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools sort -Oz -o /mount/6941d02e-ed9c-469e-aecf-8c868f57a649.vcf.gz && bcftools index /mount/6941d02e-ed9c-469e-aecf-8c868f57a649.vcf.gz
+
+Running command:
+set -u pipefail; bcftools concat -a /mount/f81eae23-b9ab-4c16-8ad6-b4474f85dd0f.vcf.gz /mount/6941d02e-ed9c-469e-aecf-8c868f57a649.vcf.gz | bcftools sort -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.csq.vcf.gz
+Removing /mount/f81eae23-b9ab-4c16-8ad6-b4474f85dd0f.vcf.gz
+Removing /mount/6941d02e-ed9c-469e-aecf-8c868f57a649.vcf.gz
+Removing /mount/f81eae23-b9ab-4c16-8ad6-b4474f85dd0f.vcf.gz.csi
+Removing /mount/6941d02e-ed9c-469e-aecf-8c868f57a649.vcf.gz.csi
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -u -f '%CHROM\t%POS\t%REF\t%ALT\t%ANN\t[%AD]\n' ./2006bda4-1364-4c51-9915-a6ec8ef60a96.targets.csq.vcf.gz
+
+Running command:
+set -u pipefail; samtools flagstat -O json SAMEA14493485_to_Ref.H37Rv.bam > 18bb38a6-60a6-42c9-913d-3fe600b2a910
+
+Running command:
+set -u pipefail; bedtools genomecov -ibam SAMEA14493485_to_Ref.H37Rv.bam
+
+Running command:
+set -u pipefail; samtools view -Mb -L /opt/conda/share/tbprofiler//tbdb.bed SAMEA14493485_to_Ref.H37Rv.bam | bedtools coverage -a /opt/conda/share/tbprofiler//tbdb.bed -b - -d -sorted
+
+Running command:
+set -u pipefail; samtools view -Mb -L /opt/conda/share/tbprofiler//tbdb.barcode.bed SAMEA14493485_to_Ref.H37Rv.bam -T /opt/conda/share/tbprofiler//tbdb.fasta > ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.bam
+
+Running command:
+set -u pipefail; samtools index ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.bam
+
+Running command:
+set -u pipefail; freebayes -f /opt/conda/share/tbprofiler//tbdb.fasta -t /opt/conda/share/tbprofiler//tbdb.barcode.bed ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.bam --haplotype-length -1 | bcftools query -f '%CHROM\t%POS\t%REF\t%ALT[\t%GT\t%AD]\n'
+
+Running command:
+set -u pipefail; bedtools getfasta -fi /opt/conda/share/tbprofiler//tbdb.fasta -bed /opt/conda/share/tbprofiler//tbdb.barcode.bed
+
+Running command:
+set -u pipefail; samtools view -b -L /opt/conda/share/tbprofiler//tbdb.barcode.bed ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.bam | bedtools coverage -a /opt/conda/share/tbprofiler//tbdb.barcode.bed -b - -d -sorted
+
+Running command:
+set -u pipefail; delly call -t DEL -g /opt/conda/share/tbprofiler//tbdb.fasta SAMEA14493485_to_Ref.H37Rv.bam -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.bcf
+
+Running command:
+set -u pipefail; bcftools query -l ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.bcf
+
+Running command:
+set -u pipefail; bcftools view -c 2  ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.bcf | bcftools view -e '(INFO/END-POS)>=100000' -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view -R /opt/conda/share/tbprofiler//tbdb.bed ./2006bda4-1364-4c51-9915-a6ec8ef60a96.tmp.delly.vcf.gz -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.vcf.gz
+
+Running command:
+set -u pipefail; bcftools view ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.vcf.gz | rename_vcf_chrom.py --source NC_000962.3 --target Chromosome | snpEff ann -dataDir /opt/conda/share/snpeff-5.1-2/data -noLog -noStats Mycobacterium_tuberculosis_h37rv - | rename_vcf_chrom.py --source Chromosome --target NC_000962.3 | bcftools view -Oz -o ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools index --threads 1 -ft ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -l ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; bcftools query -u -f '%CHROM\t%POS\t%REF\t%ALT\t%ANN\t[%AD]\n' ./2006bda4-1364-4c51-9915-a6ec8ef60a96.delly.csq.vcf.gz
+
+Running command:
+set -u pipefail; rm ./2006bda4-1364-4c51-9915-a6ec8ef60a96*
+[94m
+Writing outputs[0m
+[94m---------------[0m
+[94mWriting json file: ./results/SAMEA14493485_to_Ref.H37Rv.bam.results.json[0m
+[94mWriting text file: ./results/SAMEA14493485_to_Ref.H37Rv.bam.results.txt[0m
+[94mWriting csv file: ./results/SAMEA14493485_to_Ref.H37Rv.bam.results.csv[0m
+[92m
+Profiling finished sucessfully![0m
+# ls
+SAMEA14493485_ERR9806894_1.fastq  SAMEA14493485_to_Ref.H37Rv.bam      bam      results_from_fastq  vcf
+SAMEA14493485_ERR9806894_2.fastq  SAMEA14493485_to_Ref.H37Rv.bam.bai  results  timings.txt
+# mv results/ results_from_bam/
+# 
+# exit
+
+Script done on 2023-04-12 22:14:27+00:00 [COMMAND_EXIT_CODE="0"]

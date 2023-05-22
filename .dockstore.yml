@@ -1,8 +1,14 @@
 version: 1.2
 workflows:
   - subclass: WDL
-    primaryDescriptorPath: /tb_profiler.wdl
+    primaryDescriptorPath: /tbprofiler_bam_wf.wdl
     testParameterFiles:
-      - /tb_profiler.json
+      - /tbprofiler_bam.json
     authors:
       - orcid: 0000-0003-4896-1858
+    name: tbprofiler_bam
+  - subclass: WDL
+    primaryDescriptorPath: /tbprofiler_fastq_wf.wdl
+    authors:
+      - orcid: 0000-0003-4896-1858
+    name: tbprofiler_fastq
