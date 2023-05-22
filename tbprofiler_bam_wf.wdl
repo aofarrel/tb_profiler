@@ -1,3 +1,4 @@
+version 1.0
 import "https://raw.githubusercontent.com/aofarrel/tb_profiler/main/tbprofiler_tasks.wdl" as tbprof
 #import "https://raw.githubusercontent.com/aofarrel/SRANWRP/v1.1.10/tasks/processing_tasks.wdl" as sranwrp_processing
 
