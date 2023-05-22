@@ -24,6 +24,7 @@ task tb_profiler_fastq {
     sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
     sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
     sed -n '13p' results/~{sample_name}.results.txt | sed -r 's/^Median Depth: //' >> ~{sample_name}_depth.txt
+    sed -r 's/~{sample_name}: //' ~{sample_name}_depth.txt >> ~{sample_name}_rawdepth.txt
     >>>
     
     runtime {
@@ -38,7 +39,8 @@ task tb_profiler_fastq {
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
         String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
-        Int median_depth = "~{sample_name}: " + read_int("~{sample_name}_depth.txt")
+        String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
+        Int median_depth_as_int = "~{sample_name}: " + read_int("~{sample_name}_rawdepth.txt")
     }
 }
 
@@ -60,6 +62,7 @@ task tb_profiler_bam {
     sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
     sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
     sed -n '13p' results/~{sample_name}.results.txt | sed -r 's/^Median Depth: //' >> ~{sample_name}_depth.txt
+    sed -r 's/~{sample_name}: //' ~{sample_name}_depth.txt >> ~{sample_name}_rawdepth.txt
     >>>
     
     runtime {
@@ -74,6 +77,7 @@ task tb_profiler_bam {
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
         String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
-        Int median_depth = "~{sample_name}: " + read_int("~{sample_name}_depth.txt")
+        String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
+        Int median_depth_as_int = "~{sample_name}: " + read_int("~{sample_name}_rawdepth.txt")
     }
 }
