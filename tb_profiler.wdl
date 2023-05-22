@@ -25,6 +25,7 @@ task tb_profiler_fastq {
     tb-profiler profile -1 ~{fastqs[0]} -2 ~{fastqs[1]} -p ~{sample_name} --txt
     sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
     sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
+    sed -n '13p' results/~{sample_name}.results.txt | sed -r 's/^Median Depth: //' >> ~{sample_name}_depth.txt
     >>>
     
     runtime {
@@ -59,6 +60,7 @@ task tb_profiler_bam {
     # samples that return no lineage, like SAMN0657912, will return an empty string for strain
     sed -n '11p' results/~{sample_name}.results.txt | sed -r 's/^Strain: //' >> ~{sample_name}_strain.txt
     sed -n '12p' results/~{sample_name}.results.txt | sed -r 's/^Drug-resistance: //' >> ~{sample_name}_resistance.txt
+    sed -n '13p' results/~{sample_name}.results.txt | sed -r 's/^Median Depth: //' >> ~{sample_name}_depth.txt
     >>>
     
     runtime {
@@ -74,10 +76,4 @@ task tb_profiler_bam {
         String tbprofiler_strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
         String tbprofiler_resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
     }
-}
-
-workflow profile_by_bam {
-    input { File bam }
-    
-    call tb_profiler_bam { input: bam = bam }
 }

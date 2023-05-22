@@ -1,3 +1,6 @@
+# This script isn't used in the WDL -- it's just an example of how to parse the TBProfiler JSONs.
+# Nowadays, I parse TBProfiler's txt output instead.
+
 import os
 from tqdm import tqdm
 import subprocess
