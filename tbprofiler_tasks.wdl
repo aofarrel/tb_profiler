@@ -40,7 +40,7 @@ task tb_profiler_fastq {
         String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
         String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
-        Int median_depth_as_int = "~{sample_name}: " + read_int("~{sample_name}_rawdepth.txt")
+        Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
     }
 }
 
@@ -78,6 +78,6 @@ task tb_profiler_bam {
         String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
         String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
-        Int median_depth_as_int = "~{sample_name}: " + read_int("~{sample_name}_rawdepth.txt")
+        Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
     }
 }
