@@ -5,6 +5,7 @@ Basic WDLization of [TBProfiler](https://github.com/jodyphelan/TBProfiler). Feat
 The Docker image is based upon [staphb/tbprofiler](https://hub.docker.com/r/staphb/tbprofiler/tags) but uses a reference genome with a different chromosome name. It's the same NC_000962.3 you know and love.
 
 ## Notes
+* Use `--copy-input-files` if using miniwdl
 * For the bam version of the pipeline, "_to_Ref.H37Rv.bam" will be removed from the bam's filename to generate the sample name unless `bam_suffix` is set
 * For the fastq version of the pipeline, everything after the first underscore of the first fastq's filename will be removed to generate the sample name
 * When using the bam version of the pipeline, your bam MUST be aligned to the same reference genome as the one in this repo!
