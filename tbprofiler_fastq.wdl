@@ -12,6 +12,6 @@ workflow TBProfile_By_Fastq {
         File tbprofiler_txt = profile.tbprofiler_txt
         String strain = profile.strain
         String resistance = profile.resistance
-        Int median_depth = profile.median_depth
+        Int median_depth = profile.median_depth_as_int
     }
 }
