@@ -3,6 +3,9 @@
 
 TB is notorious for developing drug resistance, so much so that we've not only had to catagorize it into catagories of drug resistance, but we've even had to update those catagories over time. In 2021, the WHO updated their definitions of TB drug resistance with regard to XDR.<sup>[1]</sup>
 
+### Hr-TB
+> confirmed rifampicin-susceptible, isoniazid-resistant TB<sup>[5]</sup> 
+
 ### MDR-TB (**M**ulti**d**rug **R**esistance)
 > Resistance to at least both isoniazid and rifampicin.<sup>[2]</sup>
 
@@ -65,3 +68,6 @@ Most effective first-line treatment for TB.<sup>[3]</sup>
 <sup>[3]</sup> World Health Organization (WHO). 2013b. Definitions and reporting framework for tuberculosis—2013 revision. World Health Organization, Geneva. https://scholar.google.com/scholar_lookup?title=Definitions+and+reporting+framework+for+tuberculosis%E2%80%942013+revision&publication_year=2013b&
 
 <sup>[4]</sup> Azzouz, Angela, and Charles V. Preuss. “Linezolid.” StatPearls, StatPearls Publishing, 2023. PubMed, http://www.ncbi.nlm.nih.gov/books/NBK539793/.
+
+<sup>[5]</sup> WHO consolidated guidelines on drug-resistant tuberculosis treatment. Geneva: World Health Organization; 2019.
+Licence: CC BY-NC-SA 3.0 IGO. https://apps.who.int/iris/rest/bitstreams/1211676/retrieve 
