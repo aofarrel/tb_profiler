@@ -1,6 +1,6 @@
 version 1.0
-import "https://raw.githubusercontent.com/aofarrel/public_health_bioinformatics/smw-tbprofiler-dev/tasks/species_typing/task_tbprofiler.wdl" as tbprof
-import "https://raw.githubusercontent.com/aofarrel/public_health_bioinformatics/smw-tbprofiler-dev/tasks/species_typing/task_tbp_parser.wdl" as tbprof_parser
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v1.2.1/tasks/species_typing/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v1.2.1/tasks/species_typing/task_tbp_parser.wdl" as tbprof_parser
 
 workflow ThiagenTBProfiler {
     input {
