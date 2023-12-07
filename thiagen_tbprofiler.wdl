@@ -61,7 +61,7 @@ workflow ThiagenTBProfiler {
         }
     }
     
-    if(!(profiler.tbprofiler_median_coverage > minimum_pct_mapped)) {
+    if(!(profiler.tbprofiler_median_coverage > minimum_coverage)) {
         String warning_coverage = "TBPROF_" + profiler.tbprofiler_median_coverage + "_COVERAGE_(MIN_" + minimum_coverage + ")" #!StringCoercion
         if(!(soft_coverage)) {
             String failed_coverage = "TBPROF_" + profiler.tbprofiler_median_coverage + "_COVERAGE_(MIN_" + minimum_coverage + ")" #!StringCoercion
