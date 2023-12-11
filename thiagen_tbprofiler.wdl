@@ -9,9 +9,11 @@ workflow ThiagenTBProfiler {
         String sample
         String? operator
         
-        # qc cutoffs; ie discarding THE WHOLE SAMPLE
+        # qc cutoffs; ie discarding the *entire* sample
+        # note that myco's guardrail mode sets these to
+        # 10% and 3x respectively as of v5.5.0
         Int minimum_pct_mapped = 98
-        Int minimum_coverage = 3
+        Int minimum_coverage = 5
         
         # other options
         Boolean soft_all_qc = false
