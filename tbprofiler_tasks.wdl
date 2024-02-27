@@ -47,7 +47,7 @@ task tb_profiler_fastq {
 task tb_profiler_bam {
     input {
         File bam
-        String? bam_suffix
+        String bam_suffix = "_to_H37Rv.bam"
         
         Int cpu = 2
         Int memory = 4
@@ -55,7 +55,7 @@ task tb_profiler_bam {
         Boolean ssd = false
     }
     String diskType = if((ssd)) then " SSD" else " HDD"
-    String sample_name = basename(bam, select_first([bam_suffix, "_to_Ref.H37Rv.bam"]))
+    String sample_name = basename(bam, bam_suffix)
     
     command <<<
     tb-profiler profile -a ~{bam} -p ~{sample_name} --txt
