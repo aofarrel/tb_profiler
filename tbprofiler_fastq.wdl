@@ -1,6 +1,5 @@
 version 1.0
-import "https://raw.githubusercontent.com/aofarrel/tb_profiler/main/tbprofiler_tasks.wdl" as tbprof
-#import "https://raw.githubusercontent.com/aofarrel/SRANWRP/v1.1.10/tasks/processing_tasks.wdl" as sranwrp_processing
+import "./tbprofiler_tasks.wdl" as tbprof
 
 workflow TBProfile_By_Fastq {
     input { Array[File] fastqs }
@@ -10,8 +9,8 @@ workflow TBProfile_By_Fastq {
     output {
         File tbprofiler_json = profile.tbprofiler_json
         File tbprofiler_txt = profile.tbprofiler_txt
-        String strain = profile.strain
-        String resistance = profile.resistance
-        Int median_depth = profile.median_depth_as_int
+        String sample_tab_strain = profile.strain
+        String sample_tab_resistance = profile.resistance
+        Int sample_tab_median_depth = profile.median_depth_as_int
     }
 }

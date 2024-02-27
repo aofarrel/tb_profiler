@@ -37,9 +37,9 @@ task tb_profiler_fastq {
     output {
         File tbprofiler_json = "results/~{sample_name}.results.json"
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
-        String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
-        String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
-        String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
+        String strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
+        String resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
+        String median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
         Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
     }
 }
@@ -75,9 +75,9 @@ task tb_profiler_bam {
     output {
         File tbprofiler_json = "results/~{sample_name}.results.json"
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
-        String strain = "~{sample_name}: " + read_string("~{sample_name}_strain.txt")
-        String resistance = "~{sample_name}: " + read_string("~{sample_name}_resistance.txt")
-        String median_depth = "~{sample_name}: " + read_string("~{sample_name}_depth.txt")
+        String strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
+        String resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
+        String median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
         Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
     }
 }
