@@ -9,8 +9,15 @@ workflow TBProfile_By_Fastq {
     output {
         File tbprofiler_json = profile.tbprofiler_json
         File tbprofiler_txt = profile.tbprofiler_txt
-        String sample_tab_strain = profile.strain
-        String sample_tab_resistance = profile.resistance
-        Int sample_tab_median_depth = profile.median_depth_as_int
+
+        # for annotation
+        String sample_and_strain = profile.sample_and_strain
+        String sample_and_resistance = profile.sample_and_resistance
+        String sample_and_median_depth = profile.sample_and_median_depth
+
+        # raw results
+        String strain = profile.sample_and_strain
+        String resistance = profile.resistance
+        Int median_depth = profile.median_depth
     }
 }

@@ -15,9 +15,9 @@ task tb_profiler_fastq {
     
     # This needs to be to handle inputs like sample+run+num (ERS457530_ERR551697_1.fastq)
     # or inputs like sample+num (ERS457530_1.fastq). In both cases, we want to convert to just
-	# sample name (ERS457530).
-	String read_file_basename = basename(fastqs[0]) # used to calculate sample name + outfile_sam
-	String sample_name = sub(read_file_basename, "_.*", "")
+    # sample name (ERS457530).
+    String read_file_basename = basename(fastqs[0]) # used to calculate sample name + outfile_sam
+    String sample_name = sub(read_file_basename, "_.*", "")
     
     command <<<
     tb-profiler profile -1 ~{fastqs[0]} -2 ~{fastqs[1]} -p ~{sample_name} --txt
@@ -29,18 +29,24 @@ task tb_profiler_fastq {
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + diskSize + diskType
-		docker: "ashedpotatoes/tbprofiler:4.4.2"
-		memory: "${memory} GB"
-		preemptible: "${preempt}"
+        disks: "local-disk " + diskSize + diskType
+        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        memory: "${memory} GB"
+        preemptible: "${preempt}"
     }
     output {
         File tbprofiler_json = "results/~{sample_name}.results.json"
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
+
+        # for annotation
+        String sample_and_strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
+        String sample_and_resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
+        String sample_and_median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
+
+        # raw results
         String strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
-        String median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
-        Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
+        Int median_depth = read_int("~{sample_name}_rawdepth.txt")
     }
 }
 
@@ -67,17 +73,23 @@ task tb_profiler_bam {
     
     runtime {
         cpu: cpu
-		disks: "local-disk " + ceil(2*size(bam, "GB")) + diskType
-		docker: "ashedpotatoes/tbprofiler:4.4.2"
-		memory: "${memory} GB"
-		preemptible: "${preempt}"
+        disks: "local-disk " + ceil(2*size(bam, "GB")) + diskType
+        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        memory: "${memory} GB"
+        preemptible: "${preempt}"
     }
     output {
         File tbprofiler_json = "results/~{sample_name}.results.json"
         File tbprofiler_txt = "results/~{sample_name}.results.txt"
+
+        # for annotation
+        String sample_and_strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
+        String sample_and_resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
+        String sample_and_median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
+
+        # raw results
         String strain = "~{sample_name}\t" + read_string("~{sample_name}_strain.txt")
         String resistance = "~{sample_name}\t" + read_string("~{sample_name}_resistance.txt")
-        String median_depth = "~{sample_name}\t" + read_string("~{sample_name}_depth.txt")
-        Int median_depth_as_int = read_int("~{sample_name}_rawdepth.txt")
+        Int median_depth = read_int("~{sample_name}_rawdepth.txt")
     }
 }
