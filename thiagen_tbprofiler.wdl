@@ -78,14 +78,22 @@ workflow ThiagenTBProfiler {
     }
     
     output {
+        # pass/fail
         String status_code = error_or_pass
         Array[String] warning_codes = select_first([no_warnings, warnings])
+        
+        # metrics
+        Int    median_coverage = profiler.tbprofiler_median_coverage
+        Float  pct_reads_mapped = profiler.tbprofiler_pct_reads_mapped
+        Float  pct_genome_covered = csv_maker.tbp_parser_genome_percent_coverage
         String resistance = profiler.tbprofiler_dr_type
         String strain = profiler.tbprofiler_sub_lineage
-        Int median_coverage = profiler.tbprofiler_median_coverage
-        Float pct_reads_mapped = profiler.tbprofiler_pct_reads_mapped
-        Float pct_genome_covered = csv_maker.tbp_parser_genome_percent_coverage
-        File tbprofiler_json = profiler.tbprofiler_output_json
+        File   tbprofiler_json = profiler.tbprofiler_output_json
+
+        # metrics in TSV format for UShER annotation
+        String sample_and_resistance = "${sample}\t${profiler.tbprofiler_dr_type}"
+        String sample_and_strain = "${sample}\t${profiler.tbprofiler_sub_lineage}"
+        String sample_and_coverage = "${sample}\t${profiler.tbprofiler_median_coverage}"
         
         # CSVs for other tools
         File tbprofiler_looker_csv = csv_maker.tbp_parser_looker_report_csv
