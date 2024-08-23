@@ -30,7 +30,7 @@ task tb_profiler_fastq {
     runtime {
         cpu: cpu
         disks: "local-disk " + diskSize + diskType
-        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        docker: "ashedpotatoes/tbprofiler:6.2.1"
         memory: "${memory} GB"
         preemptible: "${preempt}"
     }
@@ -74,7 +74,7 @@ task tb_profiler_bam {
     runtime {
         cpu: cpu
         disks: "local-disk " + ceil(2*size(bam, "GB")) + diskType
-        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        docker: "ashedpotatoes/tbprofiler:6.2.1"
         memory: "${memory} GB"
         preemptible: "${preempt}"
     }
