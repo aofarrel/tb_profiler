@@ -88,7 +88,6 @@ workflow ThiagenTBProfiler {
         Float  pct_genome_covered = csv_maker.tbp_parser_genome_percent_coverage
         String resistance = profiler.tbprofiler_dr_type
         String strain = profiler.tbprofiler_sub_lineage
-        File   tbprofiler_json = profiler.tbprofiler_output_json
         Int    n_dr_variants = profiler.tbprofiler_num_dr_variants
         Int    n_other_variants = profiler.tbprofiler_num_other_variants
         Int    median_depth = profiler.tbprofiler_median_depth
