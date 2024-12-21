@@ -1,6 +1,6 @@
 version 1.0
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v1.2.1/tasks/species_typing/task_tbprofiler.wdl" as tbprof
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v1.2.1/tasks/species_typing/task_tbp_parser.wdl" as tbprof_parser
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
 
 workflow ThiagenTBProfiler {
     input {
@@ -89,6 +89,9 @@ workflow ThiagenTBProfiler {
         String resistance = profiler.tbprofiler_dr_type
         String strain = profiler.tbprofiler_sub_lineage
         File   tbprofiler_json = profiler.tbprofiler_output_json
+        Int    n_dr_variants = profiler.tbprofiler_num_dr_variants
+        Int    n_other_variants = profiler.tbprofiler_num_other_variants
+        Int    median_depth = profiler.tbprofiler_median_depth
 
         # metrics in TSV format for UShER annotation
         String sample_and_resistance = "${sample}\t${profiler.tbprofiler_dr_type}"
@@ -100,6 +103,10 @@ workflow ThiagenTBProfiler {
         File tbprofiler_laboratorian_report_csv = csv_maker.tbp_parser_laboratorian_report_csv
         File tbprofiler_lims_report_csv = csv_maker.tbp_parser_lims_report_csv
         File tbprofiler_coverage_report_csv = csv_maker.tbp_parser_coverage_report
+
+        # others
+        File tbprofiler_tsv = tbprofiler.tbprofiler_output_tsv
+        File tbprofiler_json = tbprofiler.tbprofiler_output_json
         
     }
 }
