@@ -1,8 +1,8 @@
 version 1.0
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v3.1.1/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
 import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
 
-workflow ThiagenTBProfiler {
+workflow TheiagenTBProfiler {
     input {
         File fastq1
         File fastq2
