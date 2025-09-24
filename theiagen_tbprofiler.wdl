@@ -8,6 +8,7 @@ workflow TheiagenTBProfiler {
         File fastq2
         String sample
         String? operator
+        File? config
         
         # qc cutoffs; ie discarding the *entire* sample
         # note that myco's guardrail mode sets these to
@@ -47,6 +48,7 @@ workflow TheiagenTBProfiler {
             tbprofiler_bai = profiler.tbprofiler_output_bai,
             tbprofiler_json = profiler.tbprofiler_output_json,
             samplename = sample,
+            config = config,
             sequencing_method = "WGS",
             operator = select_first([operator, "operator_not_filled_in"]),
             min_depth = warn_if_below_this_depth
