@@ -1,13 +1,14 @@
 version 1.0
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v2.3.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v3.1.1/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v3.1.1/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
 
-workflow ThiagenTBProfiler {
+workflow TheiagenTBProfiler {
     input {
         File fastq1
         File fastq2
         String sample
         String? operator
+        File? config
         
         # qc cutoffs; ie discarding the *entire* sample
         # note that myco's guardrail mode sets these to
@@ -47,6 +48,7 @@ workflow ThiagenTBProfiler {
             tbprofiler_bai = profiler.tbprofiler_output_bai,
             tbprofiler_json = profiler.tbprofiler_output_json,
             samplename = sample,
+            config = config,
             sequencing_method = "WGS",
             operator = select_first([operator, "operator_not_filled_in"]),
             min_depth = warn_if_below_this_depth
