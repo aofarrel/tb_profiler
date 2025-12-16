@@ -1,6 +1,6 @@
 version 1.0
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v3.1.1/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v3.1.1/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.0.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.0.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
 
 workflow TheiagenTBProfiler {
     input {
@@ -10,11 +10,9 @@ workflow TheiagenTBProfiler {
         String? operator
         File? config
         
-        # qc cutoffs; ie discarding the *entire* sample
-        # note that myco's guardrail mode sets these to
-        # 10% and 3x respectively as of v5.5.0
         Int minimum_pct_mapped = 98
-        Int minimum_depth = 5
+        Int minimum_median_depth = 5
+        Int minimum_mean_depth = 5
         
         # other options
         Boolean soft_all_qc = false
@@ -27,11 +25,12 @@ workflow TheiagenTBProfiler {
     parameter_meta {
         fastq1: "This sample's forward read"
         fastq2: "This sample's reverse read"
-        minimum_pct_mapped: "Sample fails QC if less than this percent of a sample maps to the TB ref genome."
-        minimum_depth: "Sample fails QC if median depth is less than this."
-        soft_all_qc: "Turns all QC metrics into warnings, not errors."
-        soft_depth: "Failing minimum_depth will be a warning, not an error."
-        soft_pct_mapped: "Failing minimum_pct_mapped will be a warning, not an error."
+        minimum_pct_mapped: "Sample fails QC if less than this percent of a sample maps to the TB ref genome"
+        minimum_median_depth: "Sample fails QC if median depth is less than this"
+        minimum_mean_depth: "Sample fails QC if mean (average) depth is less than this"
+        soft_all_qc: "Turns all QC metrics into warnings, not errors"
+        soft_depth: "Failing minimum_depth will be a warning, not an error"
+        soft_pct_mapped: "Failing minimum_pct_mapped will be a warning, not an error"
         warn_if_below_this_depth: "Mutations below this depth will be flagged as low-depth in the Laboratorian report. Does not affect TBProfiler JSON nor any cleaning of FASTQs."
     }
     
@@ -65,16 +64,22 @@ workflow TheiagenTBProfiler {
         }
     }
     
-    if(!(profiler.tbprofiler_median_depth > minimum_depth)) {
-        String warning_depth = "TBPROF_" + profiler.tbprofiler_median_depth + "_DEPTH_(MIN_" + minimum_depth + ")" #!StringCoercion
+    if(!(profiler.tbprofiler_median_depth > minimum_median_depth)) {
+        String warning_median_depth = "TBPROF_" + profiler.tbprofiler_median_depth + "_DEPTH_(MIN_" + minimum_median_depth + ")" #!StringCoercion
         if(!(soft_depth)) {
-            String failed_depth = "TBPROF_" + profiler.tbprofiler_median_depth + "_depth_(MIN_" + minimum_depth + ")" #!StringCoercion
+            String failed_median_depth = "TBPROF_" + profiler.tbprofiler_median_depth + "_depth_(MIN_" + minimum_median_depth + ")" #!StringCoercion
+        }
+    }
+
+    if (!(tbproparser.tbp_parser_average_genome_depth > minimum_mean_depth)) {
+        String warning_mean_depth = "TBPROF_" + tbproparser.tbp_parser_average_genome_depth + "_DEPTH_(MIN_" + minimum_mean_depth + ")" #!StringCoercion
+        if(!(soft_depth)) {
+            String failed_avg_depth = "TBPROF_" + tbproparser.tbp_parser_average_genome_depth + "_depth_(MIN_" + minimum_mean_depth + ")" #!StringCoercion
         }
     }
     
-    
-    String error_or_pass = select_first([override, failed_mapping, failed_depth, "PASS"])
-    Array[String] warnings = select_all([warning_mapping, warning_depth])
+    String error_or_pass = select_first([override, failed_mapping, failed_median_depth, failed_avg_depth, "PASS"])
+    Array[String] warnings = select_all([warning_mapping, warning_median_depth, warning_mean_depth]) # this doesn't seem to work as expected in WDL 1.0 on Cromwell?
     if(length(warnings) < 0) {
         Array[String] no_warnings = ["PASS"]
     }
