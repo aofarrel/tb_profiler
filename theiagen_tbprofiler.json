@@ -1,0 +1,5 @@
+{
+  "TheiagenTBProfiler.fastq1": "../myco/inputs/data/fastqs/ERR7057565_5x_1.fq",
+  "TheiagenTBProfiler.fastq2": "../myco/inputs/data/fastqs/ERR7057565_5x_2.fq",
+  "TheiagenTBProfiler.sample": "ERR7057565"
+}

@@ -1,6 +1,6 @@
 version 1.0
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.0.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
-import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.0.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.2.0/tasks/species_typing/mycobacterium/task_tbprofiler.wdl" as tbprof
+import "https://raw.githubusercontent.com/theiagen/public_health_bioinformatics/v4.2.0/tasks/species_typing/mycobacterium/task_tbp_parser.wdl" as tbprof_parser
 
 workflow TheiagenTBProfiler {
     input {
@@ -9,6 +9,9 @@ workflow TheiagenTBProfiler {
         String sample
         String? operator
         File? config
+        File? tbprofiler_custom_db
+        String tbdb_branch = "who_v2+"
+        String tbdb_branch_commit_hash = "29483bdc3e511c2c15076bab9f2f702694358b81"
         
         Int minimum_pct_mapped = 98
         Int minimum_median_depth = 5
@@ -38,7 +41,10 @@ workflow TheiagenTBProfiler {
         input:
             read1 = fastq1,
             read2 = fastq2,
-            samplename = sample
+            samplename = sample,
+            tbprofiler_custom_db = tbprofiler_custom_db,
+            tbdb_branch = tbdb_branch,
+            tbdb_branch_commit_hash = tbdb_branch_commit_hash
     }
     
     call tbprof_parser.tbp_parser as tbproparser {
@@ -109,7 +115,7 @@ workflow TheiagenTBProfiler {
         File tbprofiler_looker_csv = tbproparser.tbp_parser_looker_report_csv
         File tbprofiler_laboratorian_report_csv = tbproparser.tbp_parser_laboratorian_report_csv
         File tbprofiler_lims_report_csv = tbproparser.tbp_parser_lims_report_csv
-        File tbprofiler_coverage_report_csv = tbproparser.tbp_parser_coverage_report
+        File tbprofiler_coverage_report_csv = tbproparser.tbp_parser_locus_coverage_report_csv
 
         # other files
         File tbprofiler_tsv = profiler.tbprofiler_output_tsv
