@@ -3,6 +3,7 @@ version 1.0
 task tb_profiler_fastq {
     input {
         Array[File] fastqs
+        Boolean legacy_docker = false
         
         Int addldisk = 15
         Int cpu = 2
@@ -30,7 +31,7 @@ task tb_profiler_fastq {
     runtime {
         cpu: cpu
         disks: "local-disk " + diskSize + diskType
-        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        docker: if legacy_docker then "ashedpotatoes/tbprofiler:4.4.2" else "ashedpotatoes/tbprofiler:6.7.0"
         memory: "${memory} GB"
         preemptible: "${preempt}"
     }
@@ -54,6 +55,7 @@ task tb_profiler_bam {
     input {
         File bam
         String bam_suffix = "_to_H37Rv.bam"
+        Boolean legacy_docker = false
         
         Int cpu = 2
         Int memory = 4
@@ -74,7 +76,7 @@ task tb_profiler_bam {
     runtime {
         cpu: cpu
         disks: "local-disk " + ceil(2*size(bam, "GB")) + diskType
-        docker: "ashedpotatoes/tbprofiler:4.4.2"
+        docker: if legacy_docker then "ashedpotatoes/tbprofiler:4.4.2" else "ashedpotatoes/tbprofiler:6.7.0"
         memory: "${memory} GB"
         preemptible: "${preempt}"
     }
